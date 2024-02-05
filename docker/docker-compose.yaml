@@ -121,7 +121,7 @@ services:
     image: apache/airflow:2.6.0-python3.9
     command: webserver
     container_name: webserver
-    entrypoint: [ '/opt/airflow/script/entrypoint.sh' ]
+    entrypoint: [ '/bin/bash', '/opt/airflow/script/entrypoint.sh' ]
     ports:
       - "8080:8080"
     environment:
@@ -134,9 +134,9 @@ services:
         max-size: 10m
         max-file: "3"
     volumes:
-      - ../dags:/opt/airflow/dags
-      - ../script/entrypoint.sh:/opt/airflow/script/entrypoint.sh
-      - ../requirements.txt:/opt/airflow/requirements.txt
+      - ../airflow/dags:/opt/airflow/dags
+      - ../airflow/script/entrypoint.sh:/opt/airflow/script/entrypoint.sh
+      - ../airflow/requirements.txt:/opt/airflow/requirements.txt
     healthcheck:
       test:
         [
@@ -156,9 +156,9 @@ services:
     command: bash -c "pip install -r ./requirements.txt && airflow db upgrade && airflow scheduler"
     container_name: scheduler
     volumes:
-      - ../dags:/opt/airflow/dags
-      - ../script/entrypoint.sh:/opt/airflow/script/entrypoint.sh
-      - ../requirements.txt:/opt/airflow/requirements.txt
+      - ../airflow/dags:/opt/airflow/dags
+      - ../airflow/script/entrypoint.sh:/opt/airflow/script/entrypoint.sh
+      - ../airflow/requirements.txt:/opt/airflow/requirements.txt
     environment:
       LOAD_EX: n
       EXECUTOR: Sequential
