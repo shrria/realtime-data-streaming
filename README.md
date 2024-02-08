@@ -11,10 +11,8 @@
 
 ## Setup
 
-```
-cd docker
-docker-compose up -d
-```
+- `cd docker`
+- `docker-compose --env-file .env.example up -d`
 
 ### Kafka
 

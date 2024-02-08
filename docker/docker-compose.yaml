@@ -127,8 +127,8 @@ services:
     environment:
       LOAD_EX: n
       EXECUTOR: Sequential
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      AIRFLOW_WEBSERVER_SECRET_KEY: this_is_a_very_secured_key
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      AIRFLOW_WEBSERVER_SECRET_KEY: ${AIRFLOW_WEBSERVER_SECRET_KEY}
     logging:
       options:
         max-size: 10m
@@ -162,8 +162,8 @@ services:
     environment:
       LOAD_EX: n
       EXECUTOR: Sequential
-      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres:5432/airflow
-      AIRFLOW_WEBSERVER_SECRET_KEY: this_is_a_very_secured_key
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+      AIRFLOW_WEBSERVER_SECRET_KEY: ${AIRFLOW_WEBSERVER_SECRET_KEY}
     depends_on:
       webserver:
         condition: service_healthy
@@ -174,9 +174,9 @@ services:
     image: postgres:14.0
     container_name: airflow-db
     environment:
-      POSTGRES_USER: airflow
-      POSTGRES_PASSWORD: airflow
-      POSTGRES_DB: airflow
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     logging:
       options:
         max-size: 10m
@@ -221,8 +221,8 @@ services:
     environment:
       - MAX_HEAP_SIZE=512M
       - HEAP_NEWSIZE=100M
-      - CASSANDRA_USERNAME=cassandra
-      - CASSANDRA_PASSWORD=cassandra
+      - CASSANDRA_USERNAME=${CASSANDRA_USERNAME}
+      - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
     networks:
       - confluent
   ################ Spark ################
