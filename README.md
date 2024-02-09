@@ -1,40 +1,5 @@
 # realtime-data-streaming
 
-## Tech Stack
+## Introduction
 
-- Apache Kafka (Confluent)
-- Apache Zookeeper (Confluent)
-- Apache Airflow
-- PostgreSQL
-- Apache Spark (Bitnami)
-- Cassandra
-
-## Setup
-
-- `cd docker`
-- `docker-compose --env-file .env.example up -d`
-
-### Kafka
-
-(Auto create topics)
-Access the control center at `http://localhost:9021`
-
-### Airflow
-
-(Auto create scheduler and webserver)
-Access the webserver at `http://localhost:8080`
-
-### Spark
-
-(Auto create spark master and worker)
-Access the master at `http://localhost:9090`
-
-Run the following command to start the submit the job to the spark cluster:
-
-```
-spark-submit --master spark://localhost:7077 spark_stream.py
-```
-
-## References
-
-- [Realtime Data Streaming | End To End Data Engineering Project](https://www.youtube.com/watch?v=GqAcTrqKcrY)
+This repo contains examples of how to use different technologies to build a real-time data streaming pipeline. The examples are based on many videos and tutorials that I have watched and read. I have tried to make the examples as simple as possible so that they can be used as a starting point for anyone who wants to build a real-time data streaming pipeline.
