@@ -14,7 +14,15 @@
 
 ## Setup
 
-- later
+1. Prepare jars for Flink
+
+- `cd flink-processor`
+- `mvn clean package`
+
+2. Start Docker
+
+- `cd docker`
+- `docker-compose up -d`
 
 ## References
 
