@@ -1,4 +1,4 @@
-# example-1
+# kafka-airflow-spark
 
 ## Tech Stack
 

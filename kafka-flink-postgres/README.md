@@ -1,4 +1,4 @@
-# example-2
+# kafka-flink-postgres
 
 ## Tech Stack
 
