@@ -1,5 +1,10 @@
 # kafka-flink-postgres
 
+## Screenshots
+
+![example1](./staticfiles/example1.png)
+![example2](./staticfiles/example2.png)
+
 ## Tech Stack
 
 - Apache Kafka (Confluent)
@@ -9,9 +14,7 @@
 
 ## Setup
 
-## Useful Commands
-
-- docker exec -it kafka kafka-topics --bootstrap-server kafka:9092 --topic weather --create
+- later
 
 ## References
 
