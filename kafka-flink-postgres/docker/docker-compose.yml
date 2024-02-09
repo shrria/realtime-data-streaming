@@ -1,0 +1,102 @@
+version: '3'
+
+services:
+
+  ################ Kafka ################
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 32181
+      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - example-2
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:32181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: true
+      KAFKA_JMX_PORT: 9101
+      KAFKA_JMX_HOSTNAME: localhost
+    depends_on:
+      - zookeeper
+    networks:
+      - example-2
+
+  ################ Kafka ################
+
+  ################ Producer ################
+
+  producer:
+    build:
+      context: ../kafka-producer
+      dockerfile: Dockerfile
+    container_name: producer
+    environment:
+      ZOOKEEPER_SERVER: zookeeper:32181
+      KAFKA_SERVER: kafka:29092
+    depends_on:
+      - kafka
+    networks:
+      - example-2
+  ################ Producer ################
+
+
+  ################# Flink #################
+
+  flink-processor:
+    build:
+      context: ../flink-processor
+      dockerfile: Dockerfile
+    container_name: flink
+    environment:
+      ZOOKEEPER_SERVER: zookeeper:32181
+      KAFKA_SERVER: kafka:29092
+      KAFKA_TOPIC: weather
+      JOB_NAME: Kafka-flink-postgres
+      PRODUCER_INTERVAL: 100
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    depends_on:
+      - kafka
+      - postgres
+    networks:
+      - example-2
+
+  postgres:
+    image: postgres:14.0
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - ./init:/docker-entrypoint-initdb.d
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    networks:
+      - example-2
+  ################# Flink #################
+
+
+networks:
+  example-2:
+    driver: bridge
