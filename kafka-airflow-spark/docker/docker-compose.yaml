@@ -104,8 +104,6 @@ services:
     networks:
       - confluent
 
-  ################ Kafka ################
-
   ############### Airflow ###############
 
   webserver:
@@ -171,8 +169,6 @@ services:
     networks:
       - confluent
 
-  ############### Airflow ###############
-
   ################ Spark ################
 
   spark-master:
@@ -212,8 +208,6 @@ services:
       - CASSANDRA_PASSWORD=${CASSANDRA_PASSWORD}
     networks:
       - confluent
-
-  ################ Spark ################
 
 networks:
   confluent:
