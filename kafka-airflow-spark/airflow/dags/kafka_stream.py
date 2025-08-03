@@ -5,6 +5,9 @@ from airflow.operators.python import PythonOperator
 default_args = {"owner": "beginner", "start_date": datetime(2024, 2, 3, 10, 00)}
 
 
+KAFKA_BROKER = "kafka-node-1:19092"
+TOPIC_NAME = "users_created"
+
 def get_data():
     import requests
 
@@ -43,10 +46,9 @@ def stream_data():
     import time
     import logging
 
-    kafka_broker = "broker:29092"
     max_block_ms = 5000
     producer = KafkaProducer(
-        bootstrap_servers=[kafka_broker], max_block_ms=max_block_ms
+        bootstrap_servers=[KAFKA_BROKER], max_block_ms=max_block_ms
     )
 
     current_time = time.time()
@@ -57,7 +59,7 @@ def stream_data():
         try:
             new_data = get_data()
             new_user_data = format_data(new_data)
-            producer.send("users_created", json.dumps(new_user_data).encode("utf-8"))
+            producer.send(TOPIC_NAME, json.dumps(new_user_data).encode("utf-8"))
         except Exception as e:
             logging.error(f"Error while streaming data: {e}")
             continue
