@@ -5,6 +5,9 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StructField, StringType
 
+KAFKA_SERVER = "kafka-node-1:9092"
+TOPIC_NAME = "users_created"
+
 
 def create_keyspace(session):
     session.execute(
@@ -108,14 +111,11 @@ def create_spark_connection():
 def connect_to_kafka(spark_conn):
     spark_df = None
 
-    kafka_server = "localhost:9092"
-    kafka_topic = "users_created"
-
     try:
         spark_df = (
             spark_conn.readStream.format("kafka")
-            .option("kafka.bootstrap.servers", kafka_server)
-            .option("subscribe", kafka_topic)
+            .option("kafka.bootstrap.servers", KAFKA_SERVER)
+            .option("subscribe", TOPIC_NAME)
             .option("startingOffsets", "earliest")
             .load()
         )
