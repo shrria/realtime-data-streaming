@@ -5,7 +5,8 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StructField, StringType
 
-KAFKA_SERVER = "kafka-node-1:9092"
+
+KAFKA_SERVER = "localhost:9092"
 TOPIC_NAME = "users_created"
 
 
@@ -36,7 +37,7 @@ def create_table(session):
             registered_date TEXT,
             phone TEXT,
             picture TEXT
-            );
+        );
         """
     )
 
@@ -94,7 +95,7 @@ def create_spark_connection():
             .config(
                 "spark.jars.packages",
                 "com.datastax.spark:spark-cassandra-connector_2.13:3.4.1,"
-                "org.apache.spark:spark-sql-kafka-0-10_2.13:3.5.0",
+                "org.apache.spark:spark-sql-kafka-0-10_2.13:4.0.0",
             )
             .config("spark.cassandra.connection.host", "localhost")
             .getOrCreate()
@@ -122,6 +123,7 @@ def connect_to_kafka(spark_conn):
         logging.info("kafka dataframe created successfully")
 
     except Exception as e:
+        logging.error(f"Failed to connect to Kafka server: {KAFKA_SERVER}")
         logging.error(f"kafka dataframe could not be created: {e}")
 
     return spark_df
@@ -165,6 +167,7 @@ def create_selection_df_from_kafka(spark_df):
     )
     print(sel)
 
+    return sel
 
 if __name__ == "__main__":
     ## create spark connection

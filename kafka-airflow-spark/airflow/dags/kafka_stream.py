@@ -5,7 +5,7 @@ from airflow.operators.python import PythonOperator
 default_args = {"owner": "beginner", "start_date": datetime(2024, 2, 3, 10, 00)}
 
 
-KAFKA_BROKER = "kafka-node-1:19092"
+KAFKA_BROKER = "kafka-node-1:9092"
 TOPIC_NAME = "users_created"
 
 def get_data():
