@@ -6,7 +6,7 @@ from pyspark.sql.functions import col, from_json
 from pyspark.sql.types import StructType, StructField, StringType
 
 
-KAFKA_SERVER = "localhost:9092"
+KAFKA_SERVER = "kafka-node-1:9092"
 TOPIC_NAME = "users_created"
 
 

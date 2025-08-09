@@ -1,0 +1,11 @@
+[project]
+name = "spark-job"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "cassandra-driver>=3.29.2",
+    "kafka-python>=2.2.15",
+    "pyspark>=4.0.0",
+]
