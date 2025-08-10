@@ -73,6 +73,11 @@ under the License.
 			<artifactId>flink-connector-kafka</artifactId>
 			<version>${flink.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>42.6.0</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
