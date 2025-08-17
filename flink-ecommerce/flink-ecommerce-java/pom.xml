@@ -23,10 +23,9 @@ under the License.
 
 	<groupId>flink.ecommerce</groupId>
 	<artifactId>flink-ecommerce-java</artifactId>
-	<version>source /Users/shrria/Documents/GitHub/realtime-data-streaming/flink-ecommerce/.venv/bin/activate.fish</version>
-	<packaging>jar</packaging>
+	<version>1.0-SNAPSHOT</version>
 
-	<name>Flink Quickstart Job</name>
+	<name>Flink Ecommerce Java</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
