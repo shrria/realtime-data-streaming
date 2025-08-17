@@ -76,6 +76,27 @@ services:
 
   ################ Database ################
 
+  ################# Flink #################
+
+  flink-ecommerce:
+    build:
+      context: ./flink-ecommerce-java
+      dockerfile: Dockerfile
+    container_name: flink
+    environment:
+      ZOOKEEPER_SERVER: zookeeper:2181
+      KAFKA_SERVER: broker:29092
+      KAFKA_TOPIC: financial-transactions
+      KAFKA_GROUP_ID: flink-ecommerce-group
+      JOB_NAME: flink-ecommerce
+      PRODUCER_INTERVAL: 100
+    depends_on:
+      - broker
+    networks:
+      - flink-ecommerce-network
+
+  ################# Flink #################
+
   ################ Elasticsearch & Kibana ################
 
   elasticsearch:
