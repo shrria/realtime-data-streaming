@@ -18,16 +18,43 @@
 
 package flink.ecommerce;
 
+import dto.Transaction;
+import deserializer.TransactionDeserializationSchema;
+import org.apache.flink.connector.kafka.source.KafkaSource;
+import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
+import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 
 public class DataStreamJob {
+
+	static final String TOPIC_NAME = System.getenv("KAFKA_TOPIC");
+	static final String BOOTSTRAP_SERVERS = System.getenv("KAFKA_SERVER");
+	static final String JOB_NAME = System.getenv("JOB_NAME");
 
 	public static void main(String[] args) throws Exception {
 		// Sets up the execution environment, which is the main entry point
 		// to building Flink applications.
 		final StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
+		KafkaSource<Transaction> source = KafkaSource.<Transaction>builder()
+				.setBootstrapServers(BOOTSTRAP_SERVERS)
+				.setProperty("partition.discovery.interval.ms", "1000")
+				.setTopics(TOPIC_NAME)
+				.setStartingOffsets(OffsetsInitializer.earliest())
+				.setValueOnlyDeserializer(new TransactionDeserializationSchema())
+				.build();
+
+		DataStreamSource<Transaction> sourceStream = env.fromSource(source, WatermarkStrategy.noWatermarks(), "kafka");
+
+		DataStream<Transaction> transactionStream = sourceStream.map(transaction -> {
+			return transaction;
+		});
+
+		transactionStream.print();
+
 		// Execute program, beginning computation.
-		env.execute("Flink Java API Skeleton");
+		env.execute(JOB_NAME);
 	}
 }
