@@ -57,6 +57,22 @@ services:
 
   ################ Kafka ################
 
+  ################ Python Producer #################
+  python-producer:
+    build:
+      context: ./python-producer
+      dockerfile: Dockerfile
+    container_name: python-producer
+    environment:
+      KAFKA_SERVER: broker:29092
+      KAFKA_TOPIC: financial-transactions
+    depends_on:
+      - broker
+    networks:
+      - flink-ecommerce-network
+
+  ################ Python Producer #################
+
   ################ Database ################
 
   postgres:

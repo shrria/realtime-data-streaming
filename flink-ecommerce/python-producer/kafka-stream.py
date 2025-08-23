@@ -3,6 +3,7 @@ import random
 from datetime import datetime
 import json
 import time
+import os
 
 from faker import Faker
 from confluent_kafka import SerializingProducer
@@ -10,8 +11,8 @@ from confluent_kafka import SerializingProducer
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-KAFKA_SERVER = "localhost:9092"
-TOPIC_NAME = "financial-transactions"
+KAFKA_SERVER = os.getenv("KAFKA_SERVER")
+TOPIC_NAME = os.getenv("KAFKA_TOPIC")
 
 faker = Faker()
 
