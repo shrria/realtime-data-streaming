@@ -23,9 +23,10 @@ import dto.SalesPerCategory;
 import dto.SalesPerDay;
 import dto.SalesPerMonth;
 import deserializer.TransactionDeserializationSchema;
+import utils.JsonUtil;
 import org.apache.flink.connector.kafka.source.KafkaSource;
 import org.apache.flink.connector.kafka.source.enumerator.initializer.OffsetsInitializer;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
+import org.apache.flink.connector.elasticsearch.sink.Elasticsearch7SinkBuilder;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
@@ -33,6 +34,10 @@ import org.apache.flink.connector.jdbc.JdbcSink;
 import org.apache.flink.connector.jdbc.JdbcExecutionOptions;
 import org.apache.flink.connector.jdbc.JdbcConnectionOptions;
 import org.apache.flink.connector.jdbc.JdbcStatementBuilder;
+import org.apache.flink.elasticsearch7.shaded.org.apache.http.HttpHost;
+import org.apache.flink.elasticsearch7.shaded.org.elasticsearch.action.index.IndexRequest;
+import org.apache.flink.elasticsearch7.shaded.org.elasticsearch.client.Requests;
+import org.apache.flink.elasticsearch7.shaded.org.elasticsearch.common.xcontent.XContentType;
 
 import java.sql.Date;
 
@@ -47,6 +52,9 @@ public class DataStreamJob {
 	static final String POSTGRES_DB = System.getenv("POSTGRES_DB");
 	static final String POSTGRES_USER = System.getenv("POSTGRES_USER");
 	static final String POSTGRES_PASSWORD = System.getenv("POSTGRES_PASSWORD");
+
+	static final String ELASTICSEARCH_HOST = System.getenv("ELASTICSEARCH_HOST");
+	static final String ELASTICSEARCH_PORT = System.getenv("ELASTICSEARCH_PORT");
 
 	public static void main(String[] args) throws Exception {
 		// Sets up the execution environment, which is the main entry point
@@ -256,6 +264,34 @@ public class DataStreamJob {
 			getExecutionOptions(),
 			getConnectionOptions()
 		)).name("Insert Sales Per Month");
+
+		/* Elasticsearch */
+
+		String elasticHost = ELASTICSEARCH_HOST;
+		Integer elasticPort = 9200;
+
+		try {
+			elasticPort = Integer.valueOf(ELASTICSEARCH_PORT);
+		} catch (NumberFormatException e) {
+			System.err.println("Invalid Elasticsearch port: " + ELASTICSEARCH_PORT);
+			System.exit(1);
+		}
+
+		transactionStream.sinkTo(
+			new Elasticsearch7SinkBuilder<Transaction>()
+				.setHosts(new HttpHost(elasticHost, elasticPort, "http"))
+				.setEmitter((transaction, runtimeContext, requestIndexer) -> {
+					String convertedTransaction = JsonUtil.convertTransactionToJson(transaction);
+
+					IndexRequest request = Requests.indexRequest()
+						.index("transactions")
+						.id(transaction.getTransactionId())
+						.source(convertedTransaction, XContentType.JSON);
+
+					requestIndexer.add(request);
+				})
+				.build()
+		).name("Elasticsearch Sink");
 
 		// Execute program, beginning computation.
 		env.execute(JOB_NAME);
