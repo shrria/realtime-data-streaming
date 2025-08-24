@@ -290,6 +290,8 @@ public class DataStreamJob {
 
 					requestIndexer.add(request);
 				})
+				.setBulkFlushMaxActions(100)
+				.setBulkFlushInterval(1000L)
 				.build()
 		).name("Elasticsearch Sink");
 
